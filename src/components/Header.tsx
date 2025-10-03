@@ -1,24 +1,40 @@
 import { Menu, X } from 'lucide-react';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const navItems = [
-  { label: 'Home', href: '#home' },
-  { label: 'Projects', href: '#projects' },
-  { label: 'Experience', href: '#experience' },
-  { label: 'Skills', href: '#skills' },
-  { label: 'Learn', href: '#learn' },
-  { label: 'Contact', href: '#contact' },
+  { label: 'Home', href: 'home' },
+  { label: 'Projects', href: 'projects' },
+  { label: 'Experience', href: 'experience' },
+  { label: 'Skills', href: 'skills' },
+  { label: 'Learn', href: '/portfolio/learn', isRoute: true },
+  { label: 'Contact', href: 'contact' },
 ];
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const navigate = useNavigate();
 
-  const scrollToSection = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
-    e.preventDefault();
-    const element = document.querySelector(href);
+  const scrollToSection = (section: string) => {
+    const element = document.getElementById(section);
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' });
       setIsMenuOpen(false);
+    }
+  };
+
+  const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, item: typeof navItems[0]) => {
+    e.preventDefault();
+    if (item.isRoute) {
+      navigate(item.href);
+      setIsMenuOpen(false);
+    } else {
+      // Always navigate to /portfolio/ for section links
+      navigate('/portfolio/', { replace: false });
+      // Delay scroll to section until after navigation
+      setTimeout(() => {
+        scrollToSection(item.href);
+      }, 50);
     }
   };
 
@@ -27,8 +43,8 @@ export default function Header() {
       <nav className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <a
-            href="#home"
-            onClick={(e) => scrollToSection(e, '#home')}
+            href="/portfolio/#home"
+            onClick={(e) => handleNavClick(e, navItems[0])}
             className="text-xl font-bold text-gray-900 hover:text-blue-600 transition-colors"
           >
             Shaik Fayaz
@@ -38,8 +54,8 @@ export default function Header() {
             {navItems.map((item) => (
               <a
                 key={item.href}
-                href={item.href}
-                onClick={(e) => scrollToSection(e, item.href)}
+                href={item.isRoute ? item.href : `/portfolio/#${item.href}`}
+                onClick={(e) => handleNavClick(e, item)}
                 className="text-gray-700 hover:text-blue-600 transition-colors font-medium"
               >
                 {item.label}
@@ -65,8 +81,8 @@ export default function Header() {
             {navItems.map((item) => (
               <a
                 key={item.href}
-                href={item.href}
-                onClick={(e) => scrollToSection(e, item.href)}
+                href={item.isRoute ? item.href : `/portfolio/#${item.href}`}
+                onClick={(e) => handleNavClick(e, item)}
                 className="block py-2 text-gray-700 hover:text-blue-600 transition-colors font-medium"
               >
                 {item.label}

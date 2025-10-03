@@ -1,3 +1,6 @@
+// ...existing code...
+import '../learn.css';
+
 import { BookOpen, Clock, ArrowRight } from 'lucide-react';
 import { useState } from 'react';
 
@@ -54,104 +57,117 @@ const articles = [
 
 export default function Learn() {
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
+  const [activeArticle, setActiveArticle] = useState<number | null>(null);
 
-  const allTags = Array.from(
-    new Set(articles.flatMap((article) => article.tags))
-  ).sort();
-
-  const filteredArticles = selectedTag
-    ? articles.filter((article) => article.tags.includes(selectedTag))
-    : articles;
+  const allTags = Array.from(new Set(articles.flatMap((article) => article.tags))).sort();
+  const filteredArticles = selectedTag ? articles.filter((article) => article.tags.includes(selectedTag)) : articles;
+  const activeContent = articles.find((a) => a.id === activeArticle);
 
   return (
-    <section id="learn" className="py-20 bg-gradient-to-br from-gray-50 to-gray-100">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-4">
-              Learn ML
-            </h2>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              In-depth articles and tutorials on machine learning concepts, techniques, and best practices
+    <section id="learn">
+      <div className="learn-hero">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-4xl mx-auto text-center">
+            <h1 className="learn-hero-title">ML Blog & Resources</h1>
+            <p className="learn-hero-desc">
+              Explore curated articles, tutorials, and guides on Machine Learning, Deep Learning, and MLOps. Use the sidebar to browse by topic.
             </p>
           </div>
+        </div>
+      </div>
 
-          <div className="mb-8 flex flex-wrap justify-center gap-3">
-            <button
-              onClick={() => setSelectedTag(null)}
-              className={`px-4 py-2 rounded-full font-medium transition-all ${
-                selectedTag === null
-                  ? 'bg-blue-600 text-white shadow-lg'
-                  : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-200'
-              }`}
-            >
-              All Topics
-            </button>
-            {allTags.map((tag) => (
-              <button
-                key={tag}
-                onClick={() => setSelectedTag(tag)}
-                className={`px-4 py-2 rounded-full font-medium transition-all ${
-                  selectedTag === tag
-                    ? 'bg-blue-600 text-white shadow-lg'
-                    : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-200'
-                }`}
-              >
-                {tag}
-              </button>
-            ))}
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {filteredArticles.map((article) => (
-              <article
-                key={article.id}
-                className="bg-white rounded-xl border-2 border-gray-100 hover:border-blue-500 transition-all shadow-sm hover:shadow-xl overflow-hidden group cursor-pointer"
-              >
-                <div className="p-6">
-                  <div className="flex items-center gap-2 text-gray-500 text-sm mb-3">
-                    <BookOpen className="w-4 h-4" />
-                    <span className="font-medium">Article</span>
-                    <span className="mx-2">•</span>
-                    <Clock className="w-4 h-4" />
-                    <span>{article.readingTime} min read</span>
-                  </div>
-
-                  <h3 className="text-xl font-bold text-gray-900 mb-3 group-hover:text-blue-600 transition-colors">
-                    {article.title}
-                  </h3>
-
-                  <p className="text-gray-600 mb-4 line-clamp-3">
-                    {article.excerpt}
-                  </p>
-
-                  <div className="flex flex-wrap gap-2 mb-4">
-                    {article.tags.map((tag) => (
-                      <span
-                        key={tag}
-                        className="px-3 py-1 bg-blue-50 text-blue-700 rounded-full text-sm font-medium"
-                      >
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
-
-                  <button className="flex items-center gap-2 text-blue-600 font-semibold group-hover:gap-3 transition-all">
-                    Read Article
-                    <ArrowRight className="w-4 h-4" />
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-6xl mx-auto flex flex-col md:flex-row gap-8">
+          {/* Sidebar Navigation */}
+          <aside className="w-full md:w-64">
+            <nav>
+              <h2 className="font-bold text-lg mb-4 text-gray-900">Topics</h2>
+              <ul className="flex md:block flex-wrap gap-2 md:gap-0">
+                <li>
+                  <button
+                    onClick={() => setSelectedTag(null)}
+                    className={`learn-tag-btn${selectedTag === null ? ' selected' : ''}`}
+                  >
+                    All Topics
                   </button>
-                </div>
-              </article>
-            ))}
-          </div>
+                </li>
+                {allTags.map((tag) => (
+                  <li key={tag}>
+                    <button
+                      onClick={() => setSelectedTag(tag)}
+                      className={`learn-tag-btn${selectedTag === tag ? ' selected' : ''}`}
+                    >
+                      {tag}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          </aside>
 
-          {filteredArticles.length === 0 && (
-            <div className="text-center py-12">
-              <p className="text-gray-500 text-lg">
-                No articles found for this topic.
-              </p>
-            </div>
-          )}
+          {/* Main Blog Content */}
+          <main className="flex-1">
+            {activeContent ? (
+              <div className="bg-white rounded-xl border-2 border-gray-100 shadow-md p-8 mb-8">
+                <h2 className="text-3xl font-bold text-gray-900 mb-4">{activeContent.title}</h2>
+                <div className="learn-article-meta mb-4">
+                  <BookOpen className="w-4 h-4" />
+                  <span>Article</span>
+                  <span>•</span>
+                  <Clock className="w-4 h-4" />
+                  <span>{activeContent.readingTime} min read</span>
+                </div>
+                <div className="learn-article-tags mb-4">
+                  {activeContent.tags.map((tag) => (
+                    <span key={tag} className="learn-article-tag">
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+                <p className="learn-article-excerpt text-lg mb-8">{activeContent.excerpt}</p>
+                <div className="text-gray-500 italic">Blog content coming soon...</div>
+                <button className="mt-8 learn-tag-btn" onClick={() => setActiveArticle(null)}>
+                  ← Back to Articles
+                </button>
+              </div>
+            ) : (
+              <div>
+                <div className="learn-articles">
+                  {filteredArticles.map((article) => (
+                    <article key={article.id} className="learn-article" onClick={() => setActiveArticle(article.id)}>
+                      <div className="learn-article-content">
+                        <div className="learn-article-meta">
+                          <BookOpen className="w-4 h-4" />
+                          <span>Article</span>
+                          <span>•</span>
+                          <Clock className="w-4 h-4" />
+                          <span>{article.readingTime} min read</span>
+                        </div>
+                        <h3 className="learn-article-title">{article.title}</h3>
+                        <p className="learn-article-excerpt">{article.excerpt}</p>
+                        <div className="learn-article-tags">
+                          {article.tags.map((tag) => (
+                            <span key={tag} className="learn-article-tag">
+                              {tag}
+                            </span>
+                          ))}
+                        </div>
+                        <button className="learn-article-read" onClick={(e) => {e.stopPropagation();setActiveArticle(article.id);}}>
+                          Read Article
+                          <ArrowRight className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </article>
+                  ))}
+                </div>
+                {filteredArticles.length === 0 && (
+                  <div className="learn-no-articles">
+                    No articles found for this topic.
+                  </div>
+                )}
+              </div>
+            )}
+          </main>
         </div>
       </div>
     </section>
