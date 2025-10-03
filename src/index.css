@@ -6,4 +6,26 @@
   html {
     scroll-behavior: smooth;
   }
+  body {
+    background-color: #fff;
+    color: #1a202c;
+  }
+  html.dark body {
+    background-color: #181c2b; /* Figma deep blue */
+    color: #f3f4f6; /* white text */
+  }
+  html.dark .card, html.dark .learn-article, html.dark .learn-hero {
+    background-color: #20243a !important; /* Figma card indigo */
+    color: #f3f4f6 !important;
+    border-color: #334155 !important;
+    box-shadow: 0 2px 8px rgba(30,41,59,0.10);
+  }
+  html.dark .accent {
+    background: linear-gradient(90deg, #3b82f6 0%, #2563eb 100%);
+    color: #fff !important;
+    border-color: #3b82f6 !important;
+  }
+  html.dark .secondary {
+    color: #a3aed0 !important;
+  }
 }

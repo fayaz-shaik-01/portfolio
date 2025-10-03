@@ -4,12 +4,12 @@ export default function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-gray-900 text-white py-12">
+  <footer className="bg-gray-900 dark:bg-[#181f3a] text-white py-12">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="max-w-6xl mx-auto">
           <div className="flex flex-col md:flex-row items-center justify-between gap-6">
             <div className="text-center md:text-left">
-              <h3 className="text-2xl font-bold mb-2">ML Portfolio</h3>
+              <h3 className="text-2xl font-bold mb-2 text-white">ML Portfolio</h3>
               <p className="text-gray-400">
                 Building intelligent systems with machine learning
               </p>
@@ -20,7 +20,7 @@ export default function Footer() {
                 href="https://github.com/fayaz-shaik-01"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="p-3 bg-gray-800 rounded-full hover:bg-gray-700 transition-all hover:scale-110"
+                className="accent p-3 bg-gray-800 dark:bg-blue-600 rounded-full hover:bg-gray-700 dark:hover:bg-blue-700 transition-all hover:scale-110"
                 aria-label="GitHub"
               >
                 <Github className="w-5 h-5" />

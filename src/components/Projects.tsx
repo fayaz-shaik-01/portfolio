@@ -55,14 +55,14 @@ const projects = [
 
 export default function Projects() {
   return (
-    <section id="projects" className="py-20 bg-white">
+  <section id="projects" className="py-20 bg-blue-50 dark:bg-[#181f3a]">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-4">
+            <h2 className="text-4xl sm:text-5xl font-bold text-gray-900 dark:text-gray-100 mb-4">
               Featured Projects
             </h2>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+            <p className="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
               A collection of machine learning projects showcasing expertise in various domains
             </p>
           </div>
@@ -71,21 +71,21 @@ export default function Projects() {
             {projects.map((project) => (
               <div
                 key={project.id}
-                className="group bg-white rounded-xl border-2 border-gray-100 hover:border-blue-500 transition-all shadow-sm hover:shadow-xl overflow-hidden"
+                className="card group bg-white dark:bg-[#232a45] rounded-xl border-2 border-gray-100 dark:border-[#334155] hover:border-blue-500 transition-all shadow-sm dark:shadow-blue-900/20 hover:shadow-xl overflow-hidden"
               >
                 {project.featured && (
-                  <div className="bg-gradient-to-r from-blue-500 to-blue-600 text-white px-4 py-2 flex items-center gap-2">
+                  <div className="accent bg-gradient-to-r from-blue-500 to-blue-600 text-white px-4 py-2 flex items-center gap-2">
                     <Star className="w-4 h-4 fill-current" />
                     <span className="text-sm font-semibold">Featured</span>
                   </div>
                 )}
 
                 <div className="p-6">
-                  <h3 className="text-xl font-bold text-gray-900 mb-3 group-hover:text-blue-600 transition-colors">
+                  <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-3 group-hover:text-blue-600 transition-colors">
                     {project.title}
                   </h3>
 
-                  <p className="text-gray-600 mb-4 line-clamp-3">
+                  <p className="text-gray-600 dark:text-gray-300 mb-4 line-clamp-3">
                     {project.description}
                   </p>
 
@@ -93,20 +93,20 @@ export default function Projects() {
                     {project.tags.map((tag) => (
                       <span
                         key={tag}
-                        className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm font-medium"
+                        className="px-3 py-1 bg-gray-100 dark:bg-[#334155] text-gray-700 dark:text-blue-400 rounded-full text-sm font-medium"
                       >
                         {tag}
                       </span>
                     ))}
                   </div>
 
-                  <div className="flex items-center gap-3 pt-4 border-t border-gray-100">
+                  <div className="flex items-center gap-3 pt-4 border-t border-gray-100 dark:border-[#334155]">
                     {project.github && (
                       <a
                         href={project.github}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="flex items-center gap-2 text-gray-700 hover:text-blue-600 transition-colors font-medium"
+                        className="flex items-center gap-2 text-gray-700 dark:text-blue-400 hover:text-blue-600 dark:hover:text-blue-300 transition-colors font-medium"
                       >
                         <Github className="w-5 h-5" />
                         <span>Code</span>
@@ -117,7 +117,7 @@ export default function Projects() {
                         href={project.demo}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="flex items-center gap-2 text-gray-700 hover:text-blue-600 transition-colors font-medium"
+                        className="flex items-center gap-2 text-gray-700 dark:text-blue-400 hover:text-blue-600 dark:hover:text-blue-300 transition-colors font-medium"
                       >
                         <ExternalLink className="w-5 h-5" />
                         <span>Demo</span>

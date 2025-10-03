@@ -1,3 +1,60 @@
+/* Dark mode overrides */
+html.dark .learn-hero {
+  background: linear-gradient(135deg, #232a45 0%, #181f3a 100%);
+  border-bottom: 1px solid #334155;
+}
+html.dark .learn-hero-title {
+  color: #f3f4f6;
+}
+html.dark .learn-hero-desc {
+  color: #cbd5e1;
+}
+html.dark .learn-tags {
+  background: #232a45;
+}
+html.dark .learn-tag-btn {
+  background: #232a45;
+  color: #cbd5e1;
+  border-color: #334155;
+}
+html.dark .learn-tag-btn.selected {
+  background: linear-gradient(90deg, #3b82f6 0%, #2563eb 100%);
+  color: #fff;
+  border-color: #3b82f6;
+}
+html.dark .learn-articles {
+  background: transparent;
+}
+html.dark .learn-article {
+  background: #232a45;
+  border-color: #334155;
+  box-shadow: 0 2px 8px rgba(30,41,59,0.10);
+}
+html.dark .learn-article-content {
+  color: #f3f4f6;
+}
+html.dark .learn-article-meta {
+  color: #94a3b8;
+}
+html.dark .learn-article-title {
+  color: #f3f4f6;
+}
+html.dark .learn-article-excerpt {
+  color: #cbd5e1;
+}
+html.dark .learn-article-tags {
+  background: transparent;
+}
+html.dark .learn-article-tag {
+  background: #334155;
+  color: #3b82f6;
+}
+html.dark .learn-article-read {
+  color: #3b82f6;
+}
+html.dark .learn-no-articles {
+  color: #94a3b8;
+}
 /* Learn section custom styles */
 
 .learn-hero {

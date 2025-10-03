@@ -108,14 +108,14 @@ export default function Learn() {
           {/* Main Blog Content */}
           <main className="flex-1">
             {activeContent ? (
-              <div className="bg-white rounded-xl border-2 border-gray-100 shadow-md p-8 mb-8">
-                <h2 className="text-3xl font-bold text-gray-900 mb-4">{activeContent.title}</h2>
+              <div className="bg-white dark:bg-[#20243a] rounded-xl border-2 border-gray-100 dark:border-[#334155] shadow-md dark:shadow-blue-900/20 p-8 mb-8">
+                <h2 className="text-3xl font-bold text-gray-900 dark:text-[#f3f4f6] mb-4">{activeContent.title}</h2>
                 <div className="learn-article-meta mb-4">
                   <BookOpen className="w-4 h-4" />
-                  <span>Article</span>
-                  <span>•</span>
+                  <span className="text-gray-700 dark:text-[#f3f4f6]">Article</span>
+                  <span className="text-gray-400 dark:text-[#a3aed0]">•</span>
                   <Clock className="w-4 h-4" />
-                  <span>{activeContent.readingTime} min read</span>
+                  <span className="text-gray-700 dark:text-[#f3f4f6]">{activeContent.readingTime} min read</span>
                 </div>
                 <div className="learn-article-tags mb-4">
                   {activeContent.tags.map((tag) => (
@@ -124,9 +124,9 @@ export default function Learn() {
                     </span>
                   ))}
                 </div>
-                <p className="learn-article-excerpt text-lg mb-8">{activeContent.excerpt}</p>
-                <div className="text-gray-500 italic">Blog content coming soon...</div>
-                <button className="mt-8 learn-tag-btn" onClick={() => setActiveArticle(null)}>
+                <p className="learn-article-excerpt text-lg mb-8 dark:text-[#a3aed0]">{activeContent.excerpt}</p>
+                <div className="text-gray-500 dark:text-[#a3aed0] italic">Blog content coming soon...</div>
+                <button className="mt-8 learn-tag-btn dark:bg-[#20243a] dark:text-[#f3f4f6] dark:border-[#334155]" onClick={() => setActiveArticle(null)}>
                   ← Back to Articles
                 </button>
               </div>
