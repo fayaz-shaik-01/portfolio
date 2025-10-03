@@ -11,19 +11,28 @@ export default function Contact() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
 
+  const API_URL = import.meta.env.VITE_API_URL;
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
 
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-
+    try {
+      const response = await fetch(`${API_URL}/contact`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
+      if (response.ok) {
+        setIsSubmitted(true);
+        setFormData({ name: '', email: '', subject: '', message: '' });
+        setTimeout(() => setIsSubmitted(false), 3000);
+      } else {
+        alert('Failed to submit. Please try again.');
+      }
+    } catch (error) {
+      alert('Error submitting form.');
+    }
     setIsSubmitting(false);
-    setIsSubmitted(true);
-
-    setTimeout(() => {
-      setIsSubmitted(false);
-      setFormData({ name: '', email: '', subject: '', message: '' });
-    }, 3000);
   };
 
   const handleChange = (
