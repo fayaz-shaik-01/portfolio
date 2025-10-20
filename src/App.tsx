@@ -7,11 +7,18 @@ import Skills from './components/Skills';
 import Contact from './components/Contact';
 import Footer from './components/Footer';
 import { Routes, Route } from 'react-router-dom';
+import { useTheme } from './context/ThemeContext';
 
 function App() {
+  const { isDark, toggleTheme } = useTheme();
+
   return (
-    <div className="min-h-screen">
+    <div className={`min-h-screen ${isDark ? 'dark bg-[#0f172a]' : 'bg-white'}`}>
+      {/* 🔝 Global Header + Theme Toggle */}
       <Header />
+      
+
+      {/* 🔀 App Routes */}
       <Routes>
         <Route
           path="/"
@@ -43,7 +50,7 @@ function App() {
             </>
           }
         />
-        <Route path="/portfolio/learn" element={<Learn />} />
+        <Route path="/portfolio/learn" element={<Learn isDark={isDark} />} />
       </Routes>
     </div>
   );

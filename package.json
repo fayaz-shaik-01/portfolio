@@ -16,6 +16,7 @@
     "@supabase/supabase-js": "^2.57.4",
     "dompurify": "^3.3.0",
     "emailjs-com": "^3.2.0",
+    "framer-motion": "^12.23.24",
     "gray-matter": "^4.0.3",
     "hast-util-sanitize": "^5.0.2",
     "highlight.js": "^11.11.1",

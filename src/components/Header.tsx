@@ -1,6 +1,7 @@
 import { Menu, X, Sun, Moon } from 'lucide-react';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTheme } from '../context/ThemeContext';
 
 const navItems = [
   { label: 'Home', href: 'home' },
@@ -13,24 +14,8 @@ const navItems = [
 
 function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [darkMode, setDarkMode] = useState(true);
+  const { isDark, toggleTheme } = useTheme(); // 🌙 Use global theme context
   const navigate = useNavigate();
-
-  useEffect(() => {
-    // Always enable dark mode by default
-    document.documentElement.classList.add('dark');
-    if (!darkMode) {
-      setDarkMode(true);
-    }
-  }, []);
-
-  useEffect(() => {
-    if (darkMode) {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
-  }, [darkMode]);
 
   const scrollToSection = (section: string) => {
     const element = document.getElementById(section);
@@ -40,7 +25,10 @@ function Header() {
     }
   };
 
-  const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, item: typeof navItems[0]) => {
+  const handleNavClick = (
+    e: React.MouseEvent<HTMLAnchorElement>,
+    item: typeof navItems[0]
+  ) => {
     e.preventDefault();
     if (item.isRoute) {
       navigate(item.href);
@@ -65,6 +53,7 @@ function Header() {
             Shaik Fayaz
           </a>
 
+          {/* Desktop nav */}
           <div className="hidden md:flex items-center space-x-8">
             {navItems.map((item) => (
               <a
@@ -76,16 +65,17 @@ function Header() {
                 {item.label}
               </a>
             ))}
-            {/* Dark mode toggle */}
+
+            {/* 🔆 Unified dark mode toggle */}
             <button
               className="ml-6 flex items-center bg-gray-100 dark:bg-gray-800 rounded-full px-3 py-2 transition-colors border border-gray-200 dark:border-gray-700 hover:bg-gray-200 dark:hover:bg-gray-700"
-              onClick={() => setDarkMode((d) => !d)}
+              onClick={toggleTheme}
               aria-label="Toggle dark mode"
             >
               <span className="mr-2 text-sm font-medium text-gray-700 dark:text-gray-300">
-                {darkMode ? 'Dark' : 'Light'}
+                {isDark ? 'Dark' : 'Light'}
               </span>
-              {darkMode ? (
+              {isDark ? (
                 <Moon className="w-5 h-5 text-blue-500" />
               ) : (
                 <Sun className="w-5 h-5 text-yellow-400" />
@@ -93,6 +83,7 @@ function Header() {
             </button>
           </div>
 
+          {/* Mobile menu toggle */}
           <button
             className="md:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -106,6 +97,7 @@ function Header() {
           </button>
         </div>
 
+        {/* Mobile dropdown */}
         {isMenuOpen && (
           <div className="md:hidden py-4 border-t border-gray-100 dark:border-gray-800">
             {navItems.map((item) => (
@@ -118,16 +110,17 @@ function Header() {
                 {item.label}
               </a>
             ))}
-            {/* Dark mode toggle for mobile */}
+
+            {/* 🔆 Unified dark mode toggle for mobile */}
             <button
               className="mt-4 flex items-center bg-gray-100 dark:bg-gray-800 rounded-full px-3 py-2 transition-colors border border-gray-200 dark:border-gray-700 hover:bg-gray-200 dark:hover:bg-gray-700 w-full justify-center"
-              onClick={() => setDarkMode((d) => !d)}
+              onClick={toggleTheme}
               aria-label="Toggle dark mode"
             >
               <span className="mr-2 text-sm font-medium text-gray-700 dark:text-gray-300">
-                {darkMode ? 'Dark' : 'Light'}
+                {isDark ? 'Dark' : 'Light'}
               </span>
-              {darkMode ? (
+              {isDark ? (
                 <Moon className="w-5 h-5 text-blue-500" />
               ) : (
                 <Sun className="w-5 h-5 text-yellow-400" />

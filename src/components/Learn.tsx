@@ -1,7 +1,9 @@
 import React, { useMemo, useState } from 'react';
 import { BookOpen, Clock, ArrowRight } from 'lucide-react';
 import HtmlRenderer from './HtmlRenderer';
+import { motion, AnimatePresence } from 'framer-motion';
 import '../learn.css';
+import { basePath } from '../utils/basePath';
 
 type ArticleMeta = {
   id: string;
@@ -18,14 +20,7 @@ type ArticleItem = {
   filePath: string;
 };
 
-// 👇 import the Vite base URL
-const base = import.meta.env.BASE_URL || '/';
-
-// later in your articles map:
-
-
-
-// 🔍 Parse metadata from meta tags in the file (title, tags, etc.)
+// --- Parse metadata from <meta> tags in the HTML ---
 function parseHtmlMeta(raw: string) {
   const doc = new DOMParser().parseFromString(raw, 'text/html');
   const metaTitle = doc.querySelector('meta[name="title"]')?.getAttribute('content') ?? undefined;
@@ -42,76 +37,77 @@ function parseHtmlMeta(raw: string) {
   return { title, tags, readingTime, published };
 }
 
-export default function Learn() {
+// --- Extract <h2>/<h3> headings for TOC ---
+function extractHeadings(html: string) {
+  const doc = new DOMParser().parseFromString(html, 'text/html');
+  const headings = Array.from(doc.querySelectorAll('h2, h3')).map((el) => ({
+    id: el.id || el.textContent?.replace(/\s+/g, '-').toLowerCase() || '',
+    text: el.textContent || '',
+    level: el.tagName === 'H2' ? 2 : 3,
+  }));
+  return headings;
+}
+
+type LearnProps = {
+  isDark: boolean;
+};
+
+export default function Learn({ isDark }: LearnProps) {
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
   const [activeSlug, setActiveSlug] = useState<string | null>(null);
+  const [showContents, setShowContents] = useState(false);
 
-  // 🧠 Dynamically import all .html files in src/content/articles/
-  // These are raw strings, but we'll only use them for metadata parsing.
-  // The actual iframe src points to /learn/<filename>.html (served from /public/learn/)
+  // --- Dynamically import all HTML files for metadata parsing ---
   // @ts-ignore
   const modules = import.meta.glob('/src/content/articles/*.html', { as: 'raw', eager: true }) as Record<string, string>;
 
-  // 🧩 Build article list
-const articles: ArticleItem[] = useMemo(() => {
-  const base = import.meta.env.BASE_URL || '/';
-  return Object.entries(modules)
-    .map(([path, raw]) => {
-      const slug = path.split('/').pop()!.replace(/\.html$/, '');
-      const { title, tags, readingTime, published } = parseHtmlMeta(raw);
+  const articles: ArticleItem[] = useMemo(() => {
+    return Object.entries(modules)
+      .map(([path, raw]) => {
+        const slug = path.split('/').pop()!.replace(/\.html$/, '');
+        const { title, tags, readingTime, published } = parseHtmlMeta(raw);
+        return {
+          slug,
+          filePath: `${basePath}learn/${slug}.html`,
+          meta: {
+            id: slug,
+            title,
+            tags,
+            readingTime: readingTime ?? Math.max(2, Math.round((raw.split(/\s+/).length || 200) / 200)),
+            published,
+            source: 'html',
+          },
+        } as ArticleItem;
+      })
+      .filter((a) => a.meta.published)
+      .sort((a, b) => a.meta.title.localeCompare(b.meta.title));
+  }, [modules]);
 
-      return {
-        slug,
-        filePath: `${base}learn/${slug}.html`, // ✅ works with Vite base
-        meta: {
-          id: slug,
-          title,
-          tags,
-          readingTime:
-            readingTime ??
-            Math.max(2, Math.round((raw.split(/\s+/).length || 200) / 200)),
-          published,
-          source: 'html',
-        },
-      } as ArticleItem;
-    })
-    .filter((a) => a.meta.published)
-    .sort((a, b) => a.meta.title.localeCompare(b.meta.title));
-}, [modules]);
+  const allTags = useMemo(() => Array.from(new Set(articles.flatMap((a) => a.meta.tags ?? []))).sort(), [articles]);
 
-
-  const allTags = useMemo(
-    () => Array.from(new Set(articles.flatMap((a) => a.meta.tags ?? []))).sort(),
-    [articles]
-  );
-
-  const filtered = selectedTag
-    ? articles.filter((a) => a.meta.tags.includes(selectedTag))
-    : articles;
-
+  const filtered = selectedTag ? articles.filter((a) => a.meta.tags.includes(selectedTag)) : articles;
   const activeArticle = articles.find((a) => a.slug === activeSlug) ?? null;
+  const headings = activeArticle ? extractHeadings(modules[`/src/content/articles/${activeArticle.slug}.html`]) : [];
 
   return (
     <section id="learn">
-      <div className="learn-hero">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-4xl mx-auto text-center">
-            <h1 className="learn-hero-title">ML Blog & Resources</h1>
-            <p className="learn-hero-desc">
-              Drop Jupyter-exported HTML files into <code>/public/learn</code> and a matching
-              copy into <code>/src/content/articles</code> (for metadata scanning).
-            </p>
-          </div>
+      <div className="learn-hero mb-10">
+        <div className="max-w-4xl mx-auto text-center px-4">
+          <h1 className="learn-hero-title">ML Blog & Resources</h1>
+          <p className="learn-hero-desc">
+            Drop Jupyter-exported HTML files into <code>/public/learn</code> and matching metadata copies into{' '}
+            <code>/src/content/articles</code>.
+          </p>
         </div>
       </div>
 
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="max-w-6xl mx-auto flex flex-col md:flex-row gap-8">
-          <aside className="w-full md:w-64">
+      {/* Main three-column layout */}
+      <div className="max-w-7xl mx-auto px-3 md:px-4 lg:px-6">
+        <div className="grid grid-cols-1 md:grid-cols-[12rem,minmax(0,1fr),12rem] gap-6 md:gap-8 lg:gap-10">
+          {/* --- Left Sidebar (Topics) --- */}
+          <aside className="w-full md:w-auto md:sticky md:top-24 self-start space-y-4">
             <nav>
-              <h2 className="font-bold text-lg mb-4 text-gray-900 dark:text-gray-100">
-                Topics
-              </h2>
+              <h2 className="font-bold text-lg mb-4 text-gray-900 dark:text-gray-100">Topics</h2>
               <ul className="flex md:block flex-wrap gap-2 md:gap-0">
                 <li>
                   <button
@@ -119,9 +115,7 @@ const articles: ArticleItem[] = useMemo(() => {
                       setSelectedTag(null);
                       setActiveSlug(null);
                     }}
-                    className={`learn-tag-btn ${
-                      selectedTag === null ? 'selected' : ''
-                    }`}
+                    className={`learn-tag-btn ${selectedTag === null ? 'selected' : ''}`}
                   >
                     All Topics
                   </button>
@@ -133,9 +127,7 @@ const articles: ArticleItem[] = useMemo(() => {
                         setSelectedTag(tag);
                         setActiveSlug(null);
                       }}
-                      className={`learn-tag-btn ${
-                        selectedTag === tag ? 'selected' : ''
-                      }`}
+                      className={`learn-tag-btn ${selectedTag === tag ? 'selected' : ''}`}
                     >
                       {tag}
                     </button>
@@ -145,12 +137,11 @@ const articles: ArticleItem[] = useMemo(() => {
             </nav>
           </aside>
 
-          <main className="flex-1">
+          {/* --- Main Content --- */}
+          <main className="flex-1 max-w-4xl">
             {activeArticle ? (
-              <div className="bg-white dark:bg-[#20243a] rounded-xl border-2 border-gray-100 dark:border-[#334155] shadow-md dark:shadow-blue-900/20 p-8 mb-8">
-                <h2 className="text-3xl font-bold text-gray-900 dark:text-[#f3f4f6] mb-4">
-                  {activeArticle.meta.title}
-                </h2>
+              <div className="bg-white dark:bg-[#20243a] rounded-2xl border border-gray-200 dark:border-[#334155] shadow-md p-6 md:p-8 lg:p-10 mb-10">
+                <h2 className="text-3xl font-bold text-gray-900 dark:text-[#f3f4f6] mb-4">{activeArticle.meta.title}</h2>
 
                 <div className="learn-article-meta mb-6 flex items-center gap-3 text-sm dark:text-[#a3aed0]">
                   <BookOpen className="w-4 h-4" />
@@ -160,8 +151,7 @@ const articles: ArticleItem[] = useMemo(() => {
                   <span>{activeArticle.meta.readingTime} min read</span>
                 </div>
 
-                {/* 🚀 Display full Jupyter-exported HTML file */}
-                <HtmlRenderer src={activeArticle.filePath} theme="light" />
+                <HtmlRenderer src={activeArticle.filePath} theme={isDark ? 'dark' : 'light'} />
 
                 <div className="mt-8">
                   <button
@@ -174,7 +164,7 @@ const articles: ArticleItem[] = useMemo(() => {
               </div>
             ) : (
               <div>
-                <div className="learn-articles">
+                <div className="learn-articles grid gap-6">
                   {filtered.map((article) => (
                     <article
                       key={article.slug}
@@ -190,9 +180,7 @@ const articles: ArticleItem[] = useMemo(() => {
                           <span>{article.meta.readingTime} min read</span>
                         </div>
 
-                        <h3 className="learn-article-title">
-                          {article.meta.title}
-                        </h3>
+                        <h3 className="learn-article-title">{article.meta.title}</h3>
 
                         <div className="learn-article-tags">
                           {article.meta.tags.map((tag) => (
@@ -217,15 +205,97 @@ const articles: ArticleItem[] = useMemo(() => {
                 </div>
 
                 {filtered.length === 0 && (
-                  <div className="learn-no-articles">
-                    No articles found for this topic.
-                  </div>
+                  <div className="learn-no-articles">No articles found for this topic.</div>
                 )}
               </div>
             )}
           </main>
+
+          {/* --- Right Sidebar (Contents) --- */}
+          {activeArticle && headings.length > 0 && (
+            <aside className="hidden md:block md:sticky md:top-24 self-start">
+              <nav>
+                <h2 className="font-semibold text-lg mb-3 text-gray-900 dark:text-gray-100">Contents</h2>
+                <ul className="space-y-2 text-sm text-gray-700 dark:text-gray-300">
+                  {headings.map((h) => (
+                    <li key={h.id} className={`ml-${(h.level - 2) * 4}`}>
+                      <a
+                        href={`#${h.id}`}
+                        className="hover:text-blue-500 transition-colors"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          const iframe = document.querySelector('iframe');
+                          const doc = iframe?.contentDocument;
+                          const target = doc?.getElementById(h.id);
+                          target?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        }}
+                      >
+                        {h.text}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </nav>
+            </aside>
+          )}
         </div>
       </div>
+
+      {/* --- Mobile Floating TOC Drawer --- */}
+      {activeArticle && headings.length > 0 && (
+        <div className="md:hidden fixed bottom-4 right-4 z-50">
+          <button
+            onClick={() => setShowContents(true)}
+            className="bg-blue-600 text-white px-4 py-2 rounded-full shadow-lg animate-pulse"
+          >
+            ☰ Contents
+          </button>
+
+          <AnimatePresence>
+            {showContents && (
+              <div className="fixed inset-0 bg-black/40 flex justify-end z-50">
+                <motion.div
+                  initial={{ x: '100%' }}
+                  animate={{ x: 0 }}
+                  exit={{ x: '100%' }}
+                  transition={{ type: 'spring', stiffness: 200, damping: 25 }}
+                  className="bg-white dark:bg-[#1e1e2e] w-80 h-full p-6 overflow-y-auto shadow-xl"
+                >
+                  <div className="flex justify-between items-center mb-4">
+                    <h2 className="font-semibold text-lg text-gray-900 dark:text-gray-100">Contents</h2>
+                    <button
+                      onClick={() => setShowContents(false)}
+                      className="text-gray-500 hover:text-gray-700 dark:text-gray-300 dark:hover:text-gray-100"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                  <ul className="space-y-2 text-sm text-gray-700 dark:text-gray-300">
+                    {headings.map((h) => (
+                      <li key={h.id} className={`ml-${(h.level - 2) * 4}`}>
+                        <a
+                          href={`#${h.id}`}
+                          className="block py-1 hover:text-blue-500 transition-colors"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            const iframe = document.querySelector('iframe');
+                            const doc = iframe?.contentDocument;
+                            const target = doc?.getElementById(h.id);
+                            target?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                            setShowContents(false);
+                          }}
+                        >
+                          {h.text}
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                </motion.div>
+              </div>
+            )}
+          </AnimatePresence>
+        </div>
+      )}
     </section>
   );
 }
