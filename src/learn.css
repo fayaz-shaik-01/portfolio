@@ -186,3 +186,166 @@ html.dark .learn-no-articles {
   font-size: 1.1rem;
   padding: 3rem 0;
 }
+.learn-md {
+  line-height: 1.7;
+}
+
+/* code block tweaks */
+.learn-md pre {
+  border-radius: 0.75rem;
+  padding: 1rem;
+  overflow: auto;
+}
+
+/* Article renderer / code toolbar */
+.article-container {
+  /* allow article to take full width on small screens */
+}
+
+/* code block toolbar */
+.copy-btn {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  background: rgba(17,24,39,0.9);
+  color: #fff;
+  border: none;
+  padding: 0.25rem 0.6rem;
+  border-radius: 0.5rem;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: transform 0.12s ease, opacity 0.12s ease;
+  z-index: 10;
+}
+.copy-btn.copied {
+  background: #10b981;
+}
+
+html.dark .copy-btn {
+  background: rgba(255,255,255,0.06);
+  color: #dbeafe;
+}
+html.dark .copy-btn.copied {
+  background: #059669;
+}
+
+/* language label in code block */
+.code-lang {
+  position: absolute;
+  top: 0.5rem;
+  left: 0.5rem;
+  background: rgba(99,102,241,0.12);
+  color: #4f46e5;
+  font-weight: 600;
+  padding: 0.2rem 0.5rem;
+  border-radius: 0.375rem;
+  font-size: 0.75rem;
+  z-index: 9;
+}
+html.dark .code-lang {
+  background: rgba(59,130,246,0.12);
+  color: #93c5fd;
+}
+
+/* adjust pre padding to not overlap toolbar */
+.learn-md pre {
+  padding-top: 2.25rem; /* space for toolbar */
+}
+
+/* TOC card */
+.toc-card a {
+  display: block;
+  text-decoration: none;
+}
+.toc-card a:hover {
+  text-decoration: underline;
+}
+
+/* smaller indent helper (Tailwind classes not available in pure css) */
+.pl-4 { padding-left: 1rem; }
+.pl-8 { padding-left: 2rem; }
+.pl-12 { padding-left: 3rem; }
+
+/* ensure code blocks scroll nicely on small screens */
+.learn-md pre {
+  overflow: auto;
+  border-radius: 0.5rem;
+}
+
+/* keep KaTeX readable */
+.learn-md .katex {
+  font-size: 1.02em;
+}
+
+/* make links visible in dark mode */
+html.dark .learn-md a {
+  color: #93c5fd;
+  text-decoration: underline;
+}
+
+.notebook-html-output {
+  border-radius: 0.5rem;
+  padding: 1rem;
+  background: rgba(249,250,251,0.6);
+  border: 1px solid rgba(226,232,240,0.6);
+}
+html.dark .notebook-html-output {
+  background: rgba(15,23,42,0.5);
+  border-color: rgba(56,68,98,0.6);
+}
+
+/* ensure images from data: URIs fit */
+.learn-md img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 0.75rem 0;
+}
+
+/* keep pre blocks comfortable (space for toolbar) */
+.learn-md pre { padding-top: 2.25rem; }
+
+.learn-html-content {
+  line-height: 1.7;
+  color: var(--text-color, #1e293b);
+  font-family: "Inter", system-ui, sans-serif;
+}
+
+.dark .learn-html-content {
+  --text-color: #e2e8f0;
+}
+
+.learn-html-content img {
+  max-width: 100%;
+  border-radius: 0.5rem;
+  margin: 1rem 0;
+}
+
+.learn-html-content pre {
+  background: #f8fafc;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  overflow-x: auto;
+}
+
+.dark .learn-html-content pre {
+  background: #1e293b;
+}
+
+.learn-html-content table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.5rem 0;
+}
+
+.learn-html-content th,
+.learn-html-content td {
+  border: 1px solid #cbd5e1;
+  padding: 0.5rem 1rem;
+  text-align: left;
+}
+
+.dark .learn-html-content th,
+.dark .learn-html-content td {
+  border-color: #475569;
+}
