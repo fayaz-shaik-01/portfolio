@@ -1,2 +1,4 @@
 export const basePath =
-  import.meta.env.MODE === 'production' ? '/portfolio' : '';
+  import.meta.env.MODE === 'development'
+    ? '/'
+    : '/portfolio/';
